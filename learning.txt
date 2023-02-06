@@ -1,0 +1,28 @@
++++ Section 2: Setup & Installation +++
+
+1. Python Virtual Environment
+
+--> like npm init for JS --> local environment
+
+2. Virtual environment on MAC
+
+--> python3 -m venv < name >
+--> python3 -m venv venv
+
+--> View --> Command Pallete... (Command + Shift + P) \
+--> Python: Select Interpreter --> Enter interpreter path --> ./venv/bin/python
+--> Using python version in virtual environment
+--> Terminal --> source venv/bin/activate
+
++++ Section 3: FastAPI +++
+
+1. Install dependencies with pip
+
+--> pip install fastapi[all]
+--> also includes uvicorn --> used as the server that runs code
+--> also includes more --> pip freeze to see all the packages installed
+
+2. Starting Fast API
+
+--> Starting with the simplest FastAPI file
+--> Run the live server --> uvicorn main:app --reload
