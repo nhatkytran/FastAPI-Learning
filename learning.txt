@@ -18,7 +18,7 @@
 
 1. Install dependencies with pip
 
---> pip install fastapi[all]
+--> pip install "fastapi[all]"
 --> also includes uvicorn --> used as the server that runs code
 --> also includes more --> pip freeze to see all the packages installed
 
@@ -26,3 +26,32 @@
 
 --> Starting with the simplest FastAPI file
 --> Run the live server --> uvicorn main:app --reload
+
+--> http://127.0.0.1/docs --> Documentation provided by SwaggerUI
+--> http://127.0.0.1/redoc --> Documentation provided by ReDoc
+
+--> "Path" here refers the last part of the URL starting from the first /
+--> A "path" is also commonly called "endpoint" or "route"
+--> While building an API, the "path" is the main way to separate "concerns" and "resources"
+--> In computer science, a concern is a particular set of information \
+that has an effect on the code of a computer program
+
+3. Path operations
+
+--> HTTP methods --> Operations
+--> @app.get('/') --> A path operation decorator
+--> below is A path operation function
+
+--> The order of Path Operations does matter
+
+4. HTTP Post Requests
+
+--> from fastapi.params import Body
+--> function(payload: dict = Body(...))
+
+5. Request Body
+
+
+--> Concurrency and async / await --> https://fastapi.tiangolo.com/async/#in-a-hurry
+
+--> Pydantic
