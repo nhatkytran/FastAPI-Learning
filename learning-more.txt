@@ -1,3 +1,112 @@
-+++ Type Hinting +++
++++ Type Hinting +++ --> https://docs.python.org/3/library/typing.html#
 
-+++ Pydantic +++
+def func(a: int, b: dict, c: list, d: bool = True)
+
+def func(*, a: int, b: int = 0)
+
+def func(a: int, b: int) -> str
+
+def func(a: str) --> None
+
+--> from typing import Union
+--> Union allows us to specify multiple types for a single argument
+
+def func(a: Union[str, int], b: int) -> Union[str, int]
+
+--> Using pine character --> Union[str, int] --> str | int
+
+{1, 2} | {2, 3} --> {1, 2, 3}
+
+def func(a: str | int, b: int) -> str | int
+
+--> from typing import Any
+def func(a: Any) -> Any
+
+--> Optional anotation
+--> from typing import Optional
+
+--> def func(a: Union[int, None])
+--> def func(a: int | None)
+--> def func(a: Optional[int])
+
+--> Generic
+def func(a: list) -> Any
+--> from typing import List
+--> List[int]
+
+def func(a: List[float]) -> List[int]:
+    return [int(number) for number in a]
+
+--> Generic Sequence type
+from typing import Sequence
+
+def func(l: Sequence[float | int]) -> List[Union[list, int]]:
+    return list(f)
+
+--> Use the same type anotation over and over again
+--> Vector = Sequence[Union[float, int]]
+
+--> from typing import Dict --> Dict[str, int] --> Dict[str, int | Sequence[int]]
+
+--> Type hinting when parameter is a callable
+
+def custom_map(func, sequence):
+    for el in sequence:
+        yield str(func(el))
+
+from typing import Callable
+from typing import Iterator
+
+def custom_map(func: Callable[[Any], Any], sequence: Sequence[Any]) -> Iterator[str]:
+    for el in sequence:
+        yield str(func(el))
+
+
+def apply(func, values):
+    for value_1, value_2 in values:
+        yield func(value_1, value_2)
+--> list(apply(lambda x, y: x + y, [(1, 1), (2, 3), (4, 5)]))
+
+def apply(func: Callable[[int, int], int], values: Iterable[Tuple[int]]) -> Iterator[int]:
+    for value_1, value_2 in values:
+        yield func(value_1, value_2)
+
+from collections.abc import Callable, Iterable, Iterator
+
+Intf = int | float
+
+def apply(func: Callable[[Intf, Intf], Intf], values: Iterable[Iterable[int]]) -> Iterator[Intf]:
+    pass
+
+class Test:
+    a: int = 10
+    b: str = 'abc'
+    l: List[int | float] = [1, 3.14]
+
++++ Pydantic +++ --> https://docs.pydantic.dev/usage/models/
+
+--> from pydantic import BaseModel
+--> Model --> Class that inherits BaseModel
+--> Fields
+
+--> from pydantic import ValidationError
+except ValidationError as error --> error.json()
+
+--> Default value: age = 100
+--> Optional: age: int | None --> age = None (user Default value)
+
++++ Ellipsis +++
+
+--> https://realpython.com/python-ellipsis/#:~:text=In%20Short%3A%20Use%20the%20Ellipsis%20as%20a%20Placeholder%20in%20Python
+
+def func(ellipsis):
+    pass
+
+func(...)
+
+print(... is Ellipsis) --> True
+
+def func():
+    ...
+
+--> Use Ellipsis in Type Hints

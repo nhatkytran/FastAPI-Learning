@@ -1,15 +1,22 @@
-from fastapi import FastAPI
-from fastapi.params import Body
-
-app = FastAPI()
+from pydantic import BaseModel, ValidationError
 
 
-@app.get('/')
-def root():
-    return {'message': 'Hell beautiful World'}
+class User(BaseModel):
+    age: int | None
+    name = 'Frlix D. Tran'
 
 
-@app.post('/createposts')
-def create_posts(payload=Body()):
-    print(payload)
-    return {'message': 'Create posts'}
+try:
+    user = User(age=100)
+    print(user)
+except (ValidationError, TypeError) as error:
+    print('Something went wrong!')
+    if isinstance(error, TypeError):
+        print(error)
+    else:
+        print(error.json())
+
+
+# assert user.id == 123
+# assert user_x.id == 123
+# assert isinstance(user_x.id, int)
