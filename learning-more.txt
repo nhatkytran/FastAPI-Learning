@@ -95,6 +95,135 @@ except ValidationError as error --> error.json()
 --> Default value: age = 100
 --> Optional: age: int | None --> age = None (user Default value)
 
+--> Serialize an instance of Model to Dictionary or JSON Object
+
+--> To Object --> instance.dict()
+--> To JSON --> instance.json()
+
+--> instance.dict(exclude={'last_name'})
+--> instance.dict(include={'last_name'})
+--> instance.json(include={'last_name', 'age}, indent=4)
+
+--> Deserialize Dictionary or JSON Object to an instance of Model
+
+--> Model.parse_obj(< dict >)
+--> Model.parse_raw(< json >)
+
+--> camelCase to snake_case
+--> from pydantic import Field
++ first_name: str = Field(default=None, alias='firstName')
++ last_name: str = Field(alias='lastName')
+
+class Person(BaseModel):
+    class Config:
+        allow_population_by_field_name=True
+
+--> Use a mixture of field name and field alias
+
+--> p.dict(by_alias=True)
+--> p.json(by_alias=True)
+
+--> junk data --> pydantic ignores it
+--> accept junk data
+
+from pydantic import Extra
+class Person(BaseModel):
+    class Config:
+        extra = Extra.allow --> accept
+        extra = Extra.forbid --> forbid
+
+--> Convert snake_case to camelCase
+def snake_to_camel_case(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError('Value must be a string!')
+    words = value.split('_')
+    value = ''.join(word.title() for word in words if word)
+    return f'{value[0].lower()}{value[1:]}'
+
+--> Custom Base Model and alias_generator
+
+class CustomBaseModel(BaseModel):
+    class Config:
+        alias_generator = snake_to_camel_case
+        extra = Extra.forbid
+        allow_population_by_field_name = True
+
+class Person(CustomBaseModel):
+    first_name: str
+    last_name: str
+    dob: date = None
+
+
+--> Constraint
+
+from pydantic import conint
+
+class Test(BaseModel):
+    age: conint(gt=0, le=150)
+
+from pydantic import constr
+
+class Test(BaseModel):
+    first_name: str
+    last_name: constr(strict=True, strip_whitespace=True, min_length=2, curtail_length=25)
+
+--> validator --> validate and transform data
+
+from pydantic import validator
+
+class Test(CustomBaseModel):
+    hash_tag: str
+
+    @validator('hash_tag')
+    def validate_hash_tag(cls, value):
+        if not value.startswith('#'):
+            raise ValueError('Hashtag must start with a #!')
+        return value
+
+--> Calculated Fields
+
+from pydantic import validator
+
+class Test(CustomBaseModel):
+    hash_tag: constr(min_length=5, strip_whitespace=True)
+
+    @validator('hash_tag')
+    def validate_hash_tag(cls, value):
+        if not value.startswith('#'):
+            return f'#{value.lower()}'
+        return value
+
+--> Enumeration
+
+from enum import Enum
+
+class PolygonType(Enum):
+    triangle = 3
+
+t = PolygonType.triangle
+t.name --> triangle
+t.value --> 3
+
+t = PolygonType(3)
+t.name --> triangle
+t.value --> 3
+
+--> Create Polygon Model
+--> validator(cls, value, values) --> values --> store all keys that are validated successfully
+
+class PolygonModel(CustomBaseModel):
+    polygon_type: PolygonType
+    vertices: List[Tuple[int | float, int | float]]
+
+    @validator('vertices')
+    def validate_vertices(cls, value, values):
+        polygon_type = values.get('polygon_type')
+        if polygon_type:
+            num_vertices_required = polygon_type.value
+            if len(value) != num_vertices_required:
+                raise ValueError
+        return value
+
 +++ Ellipsis +++
 
 --> https://realpython.com/python-ellipsis/#:~:text=In%20Short%3A%20Use%20the%20Ellipsis%20as%20a%20Placeholder%20in%20Python
